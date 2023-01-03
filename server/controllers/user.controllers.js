@@ -111,12 +111,16 @@ export const registerUser = catchAsyncError(async(req, res, next) => {
     const result = await cloudinary.v2.uploader.upload(req.body.avatar, {
         folder: 'avatars',
         width: 150,
-        crop: 'scale'
+        crop: "scale"
     });
 
-    const { name, email, password } = req.body;
-    const user = await User.create({ name, email, password, avatar: {public_id: result.public_id, url: res.secure_url }});
+    console.log( JSON.stringify( result ) );
 
+    const { name, email, password } = req.body;
+
+    const user = await User.create({ name, email, password, avatar: {public_id: result.public_id, url: result.secure_url }});
+
+    res.status(201).json({success:true, user})
     sendToken(user, 200, res);
 });
 
