@@ -104,7 +104,7 @@ export const updateProfile = catchAsyncError(async(req, res, next) => {
 });
 
 /* @DESC   Register a new User ----------------------------------------------------------------------------
-*  @ROUTE  POST user/
+*  @ROUTE  POST user/register
 *  @ACCESS public  
 *---------------------------------------------------------------------------------------------------------*/
 export const registerUser = catchAsyncError(async(req, res, next) => {
@@ -114,13 +114,10 @@ export const registerUser = catchAsyncError(async(req, res, next) => {
         crop: "scale"
     });
 
-    console.log( JSON.stringify( result ) );
-
     const { name, email, password } = req.body;
 
     const user = await User.create({ name, email, password, avatar: {public_id: result.public_id, url: result.secure_url }});
 
-    res.status(201).json({success:true, user})
     sendToken(user, 200, res);
 });
 
