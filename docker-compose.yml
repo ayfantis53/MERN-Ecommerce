@@ -1,0 +1,19 @@
+version: '3'
+services:
+  client:
+    image: 'ayfantis53/ecommerce-client'
+    mem_limit: 128m
+    hostname: client
+  server:
+    image: 'ayfantis53/ecommerce-server'
+    mem_limit: 128m
+    hostname: api
+    environment:
+      - ATLAS_URL=$ATLAS_URL
+      - PORT=$PORT
+  nginx:
+    image: 'ayfantis53/ecommerce-nginx'
+    mem_limit: 128m
+    hostname: nginx
+    ports:
+      - "80:80"

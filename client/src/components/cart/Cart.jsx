@@ -47,12 +47,12 @@ function Cart() {
         <Fragment>
             <MetaData title={ 'Your Cart' } />
 
-            {cartItems.length === 0 ? <h2 className='mt-5'> Your Cart is Empty </h2> : (
+            {cartItems.length === 0 ? <h2 className='mt-5 mx-5'> Your Cart is Empty </h2> : (
                 <Fragment>
                     <h2 className="mt-5"> Your Cart: <b> {cartItems.length} items </b></h2>
         
                     <div className="row d-flex justify-content-between">
-                        <div className="col-12 col-lg-8 bg-white">
+                        <div className="col-12 col-lg-8 bg-white ml-5">
                             
                             {cartItems.map(item => (
                                 <Fragment>
@@ -104,7 +104,7 @@ function Cart() {
 
                         <div className="col-12 col-lg-3 my-4">
                             {/** ORDER SUMMARY BOX */}
-                            <div id="order_summary" className='bg-white'>
+                            <div id="order_summary" className='bg-white mr-5'>
                                 <h4> Order Summary </h4>
 
                                 <hr />

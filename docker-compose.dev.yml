@@ -1,0 +1,37 @@
+version: '3'
+services:
+  api:
+    image: ayfantis53/ecommerce-server
+    build: 
+      dockerfile: Dockerfile.dev
+      context: ./server
+    volumes:
+      - /app/node_modules
+      - ./server:/app
+    ports:
+      - '5000:5000'
+  client:
+    image: ayfantis53/ecommerce-client
+    build: 
+      dockerfile: Dockerfile.dev
+      context: ./client
+    volumes:
+      - /app/node_modules
+      - ./client:/app
+    environment:
+      - WD_SOCKET_PORT=0
+  nginx:
+    depends_on:
+      - api
+      - client
+    restart: always
+    image: ayfantis53/ecommerce-nginx
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./nginx
+    ports:
+      - '3050:80'
+
+# ------------------------COMMANDS----------------------#
+# docker-compose -f docker-compose.dev.yml up
+# docker-compose -f docker-compose.dev.yml down

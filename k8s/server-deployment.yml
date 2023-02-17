@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      component: server
+  template:
+    metadata:
+      labels:
+        component: server
+    spec:
+      containers:
+        - name: server
+          image: ayfantis53/ecommerce-server
+          ports:
+            - containerPort: 5000
+          env:
+            - name: PORT
+              value: '5000'
+            - name: ATLAS_URL
+              valueFrom: 
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: DBPASSWORD
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: server-cluster-ip-service
+spec:
+  type: ClusterIP
+  selector:
+    component: server
+  ports:
+    - port: 5000
+      targetPort: 5000

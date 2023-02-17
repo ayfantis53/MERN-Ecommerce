@@ -1,0 +1,90 @@
+# -------------------------------------------------------------------------------------------#
+# ------------------------------------ELB DEPLOYMENT-----------------------------------------#
+language: generic
+sudo: required
+services:
+  - docker
+
+# Create image to run test
+before_install:
+  - docker build -t ayfantis53/react-test -f ./client/Dockerfile.dev ./client
+
+# Tests
+script:
+  - docker run -e CI=true ayfantis53/react-test npm test
+
+# Production images build
+after_success: 
+  - docker build -t ayfantis53/ecommerce-client ./client
+  - docker build -t ayfantis53/ecommerce-nginx ./nginx
+  - docker build -t ayfantis53/ecommerce-server ./server
+  # Log in docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Push images to DockerHub
+  - docker push ayfantis53/ecommerce-client 
+  - docker push ayfantis53/ecommerce-nginx
+  - docker push ayfantis53/ecommerce-server 
+
+deploy:
+  provider: elasticbeanstalk
+  region: "us-east-1"
+  app: "ecommerce"
+  env: "ecommerce-env"
+  bucket_name: "elasticbeanstalk-us-east-1-583762202529"
+  bucket_path: "ecommerce"
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: "$AWS_SECRET_KEY"
+  edge: true
+
+# Set the security group in AWS to listen on ports 8080-9000
+# Set a bigger EC2 Instance t2-medium
+# Set environmental variables
+# Put EC2 Instances Ip address into MongoAtlas DB whitelist
+
+# -------------------------------------------------------------------------------------------#
+# ------------------------------------EKS DEPLOYMENT-----------------------------------------#
+# sudo: required
+# services:
+#   - docker
+# env:
+#   global:
+#     - SHA=$(git rev-parse HEAD)
+# before_install:
+# # Install kubectl
+#   - curl -LO https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl
+#   - chmod +x ./kubectl
+#   - sudo mv ./kubectl /usr/local/bin/kubectl
+
+#  # Install AWS CLI
+#   - if ! [ -x "$(command -v aws)" ]; then curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" ; unzip awscliv2.zip ; sudo ./aws/install ; fi
+#   # export environment variables for AWS CLI (using Travis environment variables)
+#   - export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+#   - export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+#   - export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+#   # Setup kubectl config to use the desired AWS EKS cluster
+#   - aws eks update-kubeconfig --region ${AWS_DEFAULT_REGION} --name ${AWS_EKS_CLUSTER_NAME}
+  
+#   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+#   - docker build -t ayfantis53/multi-client -f ./client/Dockerfile.dev ./client
+#   # - aws s3 ls
+
+#   # Load Balancer Setup
+  
+
+# script:
+#   - docker run -e CI=true ayfantis53/multi-client npm test
+
+# deploy:
+#   provider: script
+#   script: bash ./deploy.sh
+#   on:
+#     branch: master
+
+#---------------------------------------------------------------#
+# AWS_EKS_CLUSTER_NAME = eks-cluster
+# aws eks list-clusters --region us-east-2
+# aws eks update-kubeconfig --region us-east-2 --name eks-cluster
+# kubectl get svc
+

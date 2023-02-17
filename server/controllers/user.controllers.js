@@ -108,17 +108,22 @@ export const updateProfile = catchAsyncError(async(req, res, next) => {
 *  @ACCESS public  
 *---------------------------------------------------------------------------------------------------------*/
 export const registerUser = catchAsyncError(async(req, res, next) => {
-    const result = await cloudinary.v2.uploader.upload(req.body.avatar, {
-        folder: 'avatars',
-        width: 150,
-        crop: "scale"
-    });
+    try {
+        const result = await cloudinary.v2.uploader.upload(req.body.avatar, {
+          folder: "avatars",
+          width: 150,
+          crop: "scale",
+        });
 
-    const { name, email, password } = req.body;
+        const { name, email, password } = req.body;
 
-    const user = await User.create({ name, email, password, avatar: {public_id: result.public_id, url: result.secure_url }});
+        const user = await User.create({ name, email, password, avatar: {public_id: result.public_id, url: result.secure_url }});
 
-    sendToken(user, 200, res);
+        sendToken(user, 200, res);
+      } 
+      catch (error) {
+        console.log(error);
+      }
 });
 
 /* @DESC   Authenticate a User-----------------------------------------------------------------------------

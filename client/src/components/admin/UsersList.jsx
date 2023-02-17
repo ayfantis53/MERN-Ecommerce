@@ -87,7 +87,7 @@ function UsersList({ history }) {
                         <h1 className="my-5">All Users</h1>
 
                         {loading ? <Loader /> : (
-                            <MDBDataTable data={setUsers()} className="px-3" bordered striped hover />
+                            <MDBDataTable data={setUsers()} className="px-3 bg-white" bordered striped hover />
                         )}
 
                     </Fragment>

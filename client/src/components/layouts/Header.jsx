@@ -56,7 +56,7 @@ function Header() {
                             
                                 {/** DROPDOWN MENU */}
                                 <div className="dropdown-menu" aria-labelledby='dropDownMenuButton'>
-                                    {user && user.role !== 'admin' && (
+                                    {user && user.role === 'admin' && (
                                         <Link to='/dashboard' className='dropdown-item'> Dashboard </Link>
                                     )}
 
